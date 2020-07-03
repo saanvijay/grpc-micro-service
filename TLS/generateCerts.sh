@@ -21,10 +21,10 @@ cd TLS
 
 # Step 1: Generate Certificate Authority + Trust Certificate (ca.crt)
 # Generate Private Key
-openssl genrsa -passout pass:saanvijay -des3 -out HMSca.key 4096
+openssl genrsa -passout pass:saanvijay -des3 -out Exampleca.key 4096
 sleep 10
 # Get trust certificate using private key with validity 
-openssl req -passin pass:saanvijay -new -x509 -days 365 -key HMSca.key -out HMSca.crt -subj "/CN=${SERVER_CN}"
+openssl req -passin pass:saanvijay -new -x509 -days 365 -key Exampleca.key -out Exampleca.crt -subj "/CN=${SERVER_CN}"
 
 
 # Step 2: Generate the Server Private Key (scmserver.key)
@@ -34,7 +34,7 @@ sleep 10
 openssl req -passin pass:saanvijay -new -key scmserver.key -out scmserver.csr -subj "/CN=${SERVER_CN}"
 
 # Step 4: Sign the certificate with the CA we created (it's called self signing) - server.crt
-openssl x509 -req -passin pass:saanvijay -days 365 -in scmserver.csr -CA HMSca.crt -CAkey HMSca.key -set_serial 01 -out scmserver.crt 
+openssl x509 -req -passin pass:saanvijay -days 365 -in scmserver.csr -CA Exampleca.crt -CAkey Exampleca.key -set_serial 01 -out scmserver.crt 
 
 # Step 5: Convert the server certificate to .pem format (server.pem) - usable by gRPC
 openssl pkcs8 -topk8 -nocrypt -passin pass:saanvijay -in scmserver.key -out scmserver.pem

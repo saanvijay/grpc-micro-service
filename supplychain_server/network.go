@@ -3,9 +3,6 @@ package main
 import (
 	"bgclient"
 	"context"
-	"fmt"
-	"log"
-	"os"
 	"supplychainpb"
 )
 
@@ -22,14 +19,14 @@ func (n *server) CreateNetwork(ctx context.Context, req *supplychainpb.NetworkRe
 	for _, org := range orgList {
 		network.OrgList = append(network.OrgList, bgclient.Organization{org.GetOrgName(), org.GetOrgType(), org.GetOrgProperties()})
 	}
-
-	loghandler := log.New(os.Stdout, "bgclient-api ", log.LstdFlags)
-	client := bgclient.NewBlockchainGatewayClient(loghandler, "http://localhost:10000")
-	fmt.Println(network.Consortium, network.Name, network.ChannelName, network.PeersPerOrg, orgList)
-	// Call Blockchain createNetwork
-	client.GetBGHttpClient()
-	client.CreateBlockchainNetwork(network)
-
+	/*
+		loghandler := log.New(os.Stdout, "bgclient-api ", log.LstdFlags)
+		client := bgclient.NewBlockchainGatewayClient(loghandler, "http://localhost:10000")
+		fmt.Println(network.Consortium, network.Name, network.ChannelName, network.PeersPerOrg, orgList)
+		// Call Blockchain createNetwork
+		client.GetBGHttpClient()
+		client.CreateBlockchainNetwork(network)
+	*/
 	// Update local database if anything goes as off-chain data
 
 	return &supplychainpb.NetworkResponse{

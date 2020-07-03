@@ -17,7 +17,7 @@ func main() {
 
 	// With TLS/ without TLS ???
 	if tls {
-		certFile := "../TLS/HMSca.crt" // CA trust certificate
+		certFile := "../TLS/Exampleca.crt" // CA trust certificate
 		creds, tlsErr := credentials.NewClientTLSFromFile(certFile, "")
 		if tlsErr != nil {
 			log.Fatalf("Error loading CA trust certificate : %v", tlsErr)
