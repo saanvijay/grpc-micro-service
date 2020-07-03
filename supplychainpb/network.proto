@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = ".;scmpb";
+option go_package = ".;supplychainpb";
 
 message NetworkOrg {
     string orgName = 1;

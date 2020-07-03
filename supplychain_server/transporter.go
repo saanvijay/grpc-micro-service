@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"log"
-	"scmpb"
+	"supplychainpb"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (transServer *server) GetTransporter(ctx context.Context, req *scmpb.TransporterRequest) (*scmpb.TransporterResponse, error) {
+func (transServer *server) GetTransporter(ctx context.Context, req *supplychainpb.TransporterRequest) (*supplychainpb.TransporterResponse, error) {
 
 	// Collection for transporter
 	collection := mClient.Database("scmdb").Collection("transporter")
@@ -23,7 +23,7 @@ func (transServer *server) GetTransporter(ctx context.Context, req *scmpb.Transp
 	}
 
 	result := collection.FindOne(context.TODO(), bson.M{"_id": transporterID})
-	outData := scmpb.TransporterResponse{}
+	outData := supplychainpb.TransporterResponse{}
 
 	if err := result.Decode(&outData); err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (transServer *server) GetTransporter(ctx context.Context, req *scmpb.Transp
 	status := "Request transporter"
 
 	// Send processed, computed data
-	res := &scmpb.TransporterResponse{
+	res := &supplychainpb.TransporterResponse{
 		TransporterId:            transporterID.Hex(),
 		TransporterName:          transporterName,
 		Logistics:                reqLogistics,
@@ -45,7 +45,7 @@ func (transServer *server) GetTransporter(ctx context.Context, req *scmpb.Transp
 	return res, nil
 }
 
-func (transServer *server) AddTransporter(ctx context.Context, req *scmpb.TransporterRequest) (*scmpb.TransporterResponse, error) {
+func (transServer *server) AddTransporter(ctx context.Context, req *supplychainpb.TransporterRequest) (*supplychainpb.TransporterResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("transporter")
 
@@ -55,7 +55,7 @@ func (transServer *server) AddTransporter(ctx context.Context, req *scmpb.Transp
 	reqLogistics := req.GetLogistics()
 
 	// Process, check, compute data
-	var resLogistics []*scmpb.Logistics
+	var resLogistics []*supplychainpb.Logistics
 	// for each raw material check the stock status
 	for _, logistic := range reqLogistics {
 		// Get the location details from localDB or blockchain and sensor data from MQTT
@@ -69,7 +69,7 @@ func (transServer *server) AddTransporter(ctx context.Context, req *scmpb.Transp
 	status := "Transporter added"
 
 	// Send processed, computed data
-	res := scmpb.TransporterResponse{
+	res := supplychainpb.TransporterResponse{
 		//TransporterId:            transporterID,
 		TransporterName:          transporterName,
 		Logistics:                resLogistics,
@@ -86,7 +86,7 @@ func (transServer *server) AddTransporter(ctx context.Context, req *scmpb.Transp
 
 	//Update Transporter ID, since it is generated from MongoDB
 	transServer.UpdateTransporter(ctx,
-		&scmpb.TransporterRequest{
+		&supplychainpb.TransporterRequest{
 			TransporterId:            res.TransporterId,
 			TransporterName:          res.TransporterName,
 			Logistics:                res.Logistics,
@@ -96,7 +96,7 @@ func (transServer *server) AddTransporter(ctx context.Context, req *scmpb.Transp
 	return &res, nil
 }
 
-func (transServer *server) DeleteTransporter(ctx context.Context, req *scmpb.TransporterRequest) (*scmpb.TransporterResponse, error) {
+func (transServer *server) DeleteTransporter(ctx context.Context, req *supplychainpb.TransporterRequest) (*supplychainpb.TransporterResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("transporter")
 	TransporterID, err := primitive.ObjectIDFromHex(req.GetTransporterId())
@@ -111,14 +111,14 @@ func (transServer *server) DeleteTransporter(ctx context.Context, req *scmpb.Tra
 		return nil, err
 	}
 
-	return &scmpb.TransporterResponse{
+	return &supplychainpb.TransporterResponse{
 		TransporterId:     TransporterID.Hex(),
 		TransporterStatus: "Deleted",
 	}, nil
 
 }
 
-func (transServer *server) UpdateTransporter(ctx context.Context, req *scmpb.TransporterRequest) (*scmpb.TransporterResponse, error) {
+func (transServer *server) UpdateTransporter(ctx context.Context, req *supplychainpb.TransporterRequest) (*supplychainpb.TransporterResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("transporter")
 	TransporterID, err := primitive.ObjectIDFromHex(req.GetTransporterId())
@@ -131,7 +131,7 @@ func (transServer *server) UpdateTransporter(ctx context.Context, req *scmpb.Tra
 	reqLogistics := req.GetLogistics()
 
 	// Process, check, compute data
-	var resLogistics []*scmpb.Logistics
+	var resLogistics []*supplychainpb.Logistics
 	// for each raw material check the stock status
 	for _, logistic := range reqLogistics {
 		// Get the location details from localDB or blockchain and sensor data from MQTT
@@ -145,7 +145,7 @@ func (transServer *server) UpdateTransporter(ctx context.Context, req *scmpb.Tra
 	status := "Transporter updated"
 
 	// Send processed, computed data
-	update := scmpb.TransporterResponse{
+	update := supplychainpb.TransporterResponse{
 		TransporterId:            TransporterID.Hex(),
 		TransporterName:          TransporterName,
 		Logistics:                resLogistics,
@@ -159,9 +159,9 @@ func (transServer *server) UpdateTransporter(ctx context.Context, req *scmpb.Tra
 	return &update, nil
 }
 
-func (transServer *server) ListAllTransporters(req *scmpb.TransporterRequest, stream scmpb.ScmService_ListAllTransportersServer) error {
+func (transServer *server) ListAllTransporters(req *supplychainpb.TransporterRequest, stream supplychainpb.ScmService_ListAllTransportersServer) error {
 	collection := mClient.Database("scmdb").Collection("transporter")
-	data := &scmpb.TransporterResponse{}
+	data := &supplychainpb.TransporterResponse{}
 
 	cursor, err := collection.Find(context.TODO(), bson.M{})
 	if err != nil {
@@ -177,7 +177,7 @@ func (transServer *server) ListAllTransporters(req *scmpb.TransporterRequest, st
 			log.Fatal(err)
 			return err
 		}
-		stream.Send(&scmpb.TransporterResponse{
+		stream.Send(&supplychainpb.TransporterResponse{
 			TransporterId:            data.GetTransporterId(),
 			TransporterName:          data.TransporterName,
 			TransporterRespondedTime: data.TransporterRespondedTime,

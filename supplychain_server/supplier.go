@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"log"
-	"scmpb"
+	"supplychainpb"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (supplierServer *server) GetSupplier(ctx context.Context, req *scmpb.SupplierRequest) (*scmpb.SupplierResponse, error) {
+func (supplierServer *server) GetSupplier(ctx context.Context, req *supplychainpb.SupplierRequest) (*supplychainpb.SupplierResponse, error) {
 
 	// Collection for supplier
 	collection := mClient.Database("scmdb").Collection("supplier")
@@ -24,7 +24,7 @@ func (supplierServer *server) GetSupplier(ctx context.Context, req *scmpb.Suppli
 	}
 
 	result := collection.FindOne(context.TODO(), bson.M{"_id": supplierID})
-	outData := scmpb.SupplierResponse{}
+	outData := supplychainpb.SupplierResponse{}
 
 	if err := result.Decode(&outData); err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (supplierServer *server) GetSupplier(ctx context.Context, req *scmpb.Suppli
 	status := "Request supplier"
 
 	// Send processed, computed data
-	res := &scmpb.SupplierResponse{
+	res := &supplychainpb.SupplierResponse{
 		SupplierId:              supplierID.Hex(),
 		SupplierName:            supplierName,
 		Rawmaterials:            outRawMaterials,
@@ -48,7 +48,7 @@ func (supplierServer *server) GetSupplier(ctx context.Context, req *scmpb.Suppli
 	return res, nil
 }
 
-func (supplierServer *server) AddSupplier(ctx context.Context, req *scmpb.SupplierRequest) (*scmpb.SupplierResponse, error) {
+func (supplierServer *server) AddSupplier(ctx context.Context, req *supplychainpb.SupplierRequest) (*supplychainpb.SupplierResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("supplier")
 	// Get data from request
@@ -60,7 +60,7 @@ func (supplierServer *server) AddSupplier(ctx context.Context, req *scmpb.Suppli
 	associatedOwner := req.GetSupplierAssociatedOwner()
 
 	// Process, check, compute data
-	var resRawmaterials []*scmpb.InboundLogistics
+	var resRawmaterials []*supplychainpb.InboundLogistics
 	// for each raw material check the stock status
 	for _, material := range reqRawMaterials {
 		// Get the In-stock details from localDB or blockchain
@@ -72,7 +72,7 @@ func (supplierServer *server) AddSupplier(ctx context.Context, req *scmpb.Suppli
 	status := "Supplier added"
 
 	// Send processed, computed data
-	res := scmpb.SupplierResponse{
+	res := supplychainpb.SupplierResponse{
 		//SupplierId:   supplierID,
 		SupplierName:            supplierName,
 		Rawmaterials:            resRawmaterials,
@@ -90,7 +90,7 @@ func (supplierServer *server) AddSupplier(ctx context.Context, req *scmpb.Suppli
 
 	// Update ObjectID/SupplierID
 	supplierServer.UpdateSupplier(ctx,
-		&scmpb.SupplierRequest{
+		&supplychainpb.SupplierRequest{
 			SupplierId:              res.SupplierId,
 			SupplierName:            res.SupplierName,
 			Rawmaterials:            res.Rawmaterials,
@@ -101,7 +101,7 @@ func (supplierServer *server) AddSupplier(ctx context.Context, req *scmpb.Suppli
 	return &res, nil
 }
 
-func (supplierServer *server) DeleteSupplier(ctx context.Context, req *scmpb.SupplierRequest) (*scmpb.SupplierResponse, error) {
+func (supplierServer *server) DeleteSupplier(ctx context.Context, req *supplychainpb.SupplierRequest) (*supplychainpb.SupplierResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("supplier")
 	supplierID, err := primitive.ObjectIDFromHex(req.GetSupplierId())
@@ -116,14 +116,14 @@ func (supplierServer *server) DeleteSupplier(ctx context.Context, req *scmpb.Sup
 		return nil, err
 	}
 
-	return &scmpb.SupplierResponse{
+	return &supplychainpb.SupplierResponse{
 		SupplierId:     supplierID.Hex(),
 		SupplierStatus: "Supplier Deleted",
 	}, nil
 
 }
 
-func (supplierServer *server) UpdateSupplier(ctx context.Context, req *scmpb.SupplierRequest) (*scmpb.SupplierResponse, error) {
+func (supplierServer *server) UpdateSupplier(ctx context.Context, req *supplychainpb.SupplierRequest) (*supplychainpb.SupplierResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("supplier")
 	supplierID, err := primitive.ObjectIDFromHex(req.GetSupplierId())
@@ -139,7 +139,7 @@ func (supplierServer *server) UpdateSupplier(ctx context.Context, req *scmpb.Sup
 	associatedOwner := req.GetSupplierAssociatedOwner()
 
 	// Process, check, compute data
-	var resRawmaterials []*scmpb.InboundLogistics
+	var resRawmaterials []*supplychainpb.InboundLogistics
 	// for each raw material check the stock status
 	for _, material := range reqRawMaterials {
 		// Get the In-stock details from localDB or blockchain
@@ -151,7 +151,7 @@ func (supplierServer *server) UpdateSupplier(ctx context.Context, req *scmpb.Sup
 	status := "Supplier updated"
 
 	// Send processed, computed data
-	update := scmpb.SupplierResponse{
+	update := supplychainpb.SupplierResponse{
 		SupplierId:              supplierID.Hex(),
 		SupplierName:            supplierName,
 		Rawmaterials:            resRawmaterials,
@@ -166,9 +166,9 @@ func (supplierServer *server) UpdateSupplier(ctx context.Context, req *scmpb.Sup
 	return &update, nil
 }
 
-func (supplierServer *server) ListAllSuppliers(req *scmpb.SupplierRequest, stream scmpb.ScmService_ListAllSuppliersServer) error {
+func (supplierServer *server) ListAllSuppliers(req *supplychainpb.SupplierRequest, stream supplychainpb.ScmService_ListAllSuppliersServer) error {
 	collection := mClient.Database("scmdb").Collection("supplier")
-	data := &scmpb.SupplierResponse{}
+	data := &supplychainpb.SupplierResponse{}
 
 	cursor, err := collection.Find(context.TODO(), bson.M{})
 	if err != nil {
@@ -184,7 +184,7 @@ func (supplierServer *server) ListAllSuppliers(req *scmpb.SupplierRequest, strea
 			log.Fatal(err)
 			return err
 		}
-		stream.Send(&scmpb.SupplierResponse{
+		stream.Send(&supplychainpb.SupplierResponse{
 			SupplierId:              data.SupplierId,
 			SupplierName:            data.SupplierName,
 			SupplierAssociatedOwner: data.SupplierAssociatedOwner,

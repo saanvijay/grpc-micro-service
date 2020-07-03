@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"log"
-	"scmpb"
+	"supplychainpb"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (manuServer *server) GetManufacturer(ctx context.Context, req *scmpb.ManufacturerRequest) (*scmpb.ManufacturerResponse, error) {
+func (manuServer *server) GetManufacturer(ctx context.Context, req *supplychainpb.ManufacturerRequest) (*supplychainpb.ManufacturerResponse, error) {
 
 	// Collection for manufacturer
 	collection := mClient.Database("scmdb").Collection("manufacturer")
@@ -23,7 +23,7 @@ func (manuServer *server) GetManufacturer(ctx context.Context, req *scmpb.Manufa
 	}
 
 	result := collection.FindOne(context.TODO(), bson.M{"_id": manufacturerID})
-	outData := scmpb.ManufacturerResponse{}
+	outData := supplychainpb.ManufacturerResponse{}
 
 	if err := result.Decode(&outData); err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (manuServer *server) GetManufacturer(ctx context.Context, req *scmpb.Manufa
 	status := "Requesting manufacturer"
 
 	// Send processed, computed data
-	res := &scmpb.ManufacturerResponse{
+	res := &supplychainpb.ManufacturerResponse{
 		ManufacturerId:              manufacturerID.Hex(),
 		ManufacturerName:            manufacturerName,
 		ManufacturerProducts:        reqProducts,
@@ -47,7 +47,7 @@ func (manuServer *server) GetManufacturer(ctx context.Context, req *scmpb.Manufa
 	return res, nil
 }
 
-func (manuServer *server) AddManufacturer(ctx context.Context, req *scmpb.ManufacturerRequest) (*scmpb.ManufacturerResponse, error) {
+func (manuServer *server) AddManufacturer(ctx context.Context, req *supplychainpb.ManufacturerRequest) (*supplychainpb.ManufacturerResponse, error) {
 
 	// Collection for manufacturer
 	collection := mClient.Database("scmdb").Collection("manufacturer")
@@ -58,7 +58,7 @@ func (manuServer *server) AddManufacturer(ctx context.Context, req *scmpb.Manufa
 	associatedOwner := req.GetManufacturerAssociatedOwner()
 
 	// Process, check, compute data
-	var resProducts []*scmpb.OutboundLogistics
+	var resProducts []*supplychainpb.OutboundLogistics
 	// for each raw material check the stock status
 	for _, prod := range resProducts {
 		// Get the In-stock details from localDB or blockchain
@@ -70,7 +70,7 @@ func (manuServer *server) AddManufacturer(ctx context.Context, req *scmpb.Manufa
 	status := "Manufacturer added"
 
 	// Send processed, computed data
-	res := scmpb.ManufacturerResponse{
+	res := supplychainpb.ManufacturerResponse{
 		ManufacturerName:            manufacturerName,
 		ManufacturerProducts:        reqProducts,
 		ManufacturerAssociatedOwner: associatedOwner,
@@ -87,7 +87,7 @@ func (manuServer *server) AddManufacturer(ctx context.Context, req *scmpb.Manufa
 
 	//Update Manufacturer ID, since it is generated from MongoDB
 	manuServer.UpdateManufacturer(ctx,
-		&scmpb.ManufacturerRequest{
+		&supplychainpb.ManufacturerRequest{
 			ManufacturerId:              res.ManufacturerId,
 			ManufacturerName:            res.ManufacturerName,
 			ManufacturerProducts:        res.ManufacturerProducts,
@@ -98,7 +98,7 @@ func (manuServer *server) AddManufacturer(ctx context.Context, req *scmpb.Manufa
 
 }
 
-func (manuServer *server) DeleteManufacturer(ctx context.Context, req *scmpb.ManufacturerRequest) (*scmpb.ManufacturerResponse, error) {
+func (manuServer *server) DeleteManufacturer(ctx context.Context, req *supplychainpb.ManufacturerRequest) (*supplychainpb.ManufacturerResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("manufacturer")
 	manufacturerID, err := primitive.ObjectIDFromHex(req.GetManufacturerId())
@@ -113,14 +113,14 @@ func (manuServer *server) DeleteManufacturer(ctx context.Context, req *scmpb.Man
 		return nil, err
 	}
 
-	return &scmpb.ManufacturerResponse{
+	return &supplychainpb.ManufacturerResponse{
 		ManufacturerId:     manufacturerID.Hex(),
 		ManufacturerStatus: "Manufacturer Deleted",
 	}, nil
 
 }
 
-func (manuServer *server) UpdateManufacturer(ctx context.Context, req *scmpb.ManufacturerRequest) (*scmpb.ManufacturerResponse, error) {
+func (manuServer *server) UpdateManufacturer(ctx context.Context, req *supplychainpb.ManufacturerRequest) (*supplychainpb.ManufacturerResponse, error) {
 
 	// Collection for manufacturer
 	collection := mClient.Database("scmdb").Collection("manufacturer")
@@ -135,7 +135,7 @@ func (manuServer *server) UpdateManufacturer(ctx context.Context, req *scmpb.Man
 	associatedOwner := req.GetManufacturerAssociatedOwner()
 
 	// Process, check, compute data
-	var resProducts []*scmpb.OutboundLogistics
+	var resProducts []*supplychainpb.OutboundLogistics
 	// for each raw material check the stock status
 	for _, prod := range resProducts {
 		// Get the In-stock details from localDB or blockchain
@@ -147,7 +147,7 @@ func (manuServer *server) UpdateManufacturer(ctx context.Context, req *scmpb.Man
 	status := "Manufacturer updated"
 
 	// Send processed, computed data
-	update := scmpb.ManufacturerResponse{
+	update := supplychainpb.ManufacturerResponse{
 		ManufacturerId:              manufacturerID.Hex(),
 		ManufacturerName:            manufacturerName,
 		ManufacturerProducts:        reqProducts,
@@ -163,9 +163,9 @@ func (manuServer *server) UpdateManufacturer(ctx context.Context, req *scmpb.Man
 
 }
 
-func (manuServer *server) ListAllManufacturers(req *scmpb.ManufacturerRequest, stream scmpb.ScmService_ListAllManufacturersServer) error {
+func (manuServer *server) ListAllManufacturers(req *supplychainpb.ManufacturerRequest, stream supplychainpb.ScmService_ListAllManufacturersServer) error {
 	collection := mClient.Database("scmdb").Collection("manufacturer")
-	data := &scmpb.ManufacturerResponse{}
+	data := &supplychainpb.ManufacturerResponse{}
 
 	cursor, err := collection.Find(context.TODO(), bson.M{})
 	if err != nil {
@@ -181,7 +181,7 @@ func (manuServer *server) ListAllManufacturers(req *scmpb.ManufacturerRequest, s
 			log.Fatal(err)
 			return err
 		}
-		stream.Send(&scmpb.ManufacturerResponse{
+		stream.Send(&supplychainpb.ManufacturerResponse{
 			ManufacturerId:              data.GetManufacturerId(),
 			ManufacturerName:            data.GetManufacturerName(),
 			ManufacturerAssociatedOwner: data.GetManufacturerAssociatedOwner(),

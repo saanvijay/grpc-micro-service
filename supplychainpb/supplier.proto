@@ -2,8 +2,8 @@
 
 syntax = "proto3";
 
-import "scmpb/logistics.proto";
-option go_package = ".;scmpb";
+import "supplychainpb/logistics.proto";
+option go_package = ".;supplychainpb";
 
 message SupplierRequest {
     string supplier_id = 1;

@@ -1,6 +1,6 @@
 
 syntax = "proto3";
-option go_package = ".;scmpb";
+option go_package = ".;supplychainpb";
 
 // InboundLogistics will be used in Upstream Operations 
 // typical stakeholders are Supplier and manufacturer

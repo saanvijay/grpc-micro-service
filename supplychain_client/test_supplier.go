@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"scmpb"
+	"supplychainpb"
 	"time"
 )
 
-func AddSupplier(client scmpb.ScmServiceClient) string {
+func AddSupplier(client supplychainpb.ScmServiceClient) string {
 
 	fmt.Println("Add Supplier.....")
-	var req scmpb.SupplierRequest
+	var req supplychainpb.SupplierRequest
 	req.SupplierName = "Vijay"
 	req.SupplierRequestedTime = time.Now().Format("01-02-2006 15:04:05 Monday")
 	req.SupplierStatus = "Requsting Raw materials"
@@ -26,9 +26,9 @@ func AddSupplier(client scmpb.ScmServiceClient) string {
 	return res.GetSupplierId()
 }
 
-func UpdateSupplier(client scmpb.ScmServiceClient, id string) {
+func UpdateSupplier(client supplychainpb.ScmServiceClient, id string) {
 	fmt.Println("UpdateSupplier ....")
-	var req scmpb.SupplierRequest
+	var req supplychainpb.SupplierRequest
 	req.SupplierId = id
 	req.SupplierName = "Prakash"
 	req.SupplierRequestedTime = time.Now().Format("01-02-2006 15:04:05 Monday")
@@ -42,9 +42,9 @@ func UpdateSupplier(client scmpb.ScmServiceClient, id string) {
 
 }
 
-func DeleteSupplier(client scmpb.ScmServiceClient, id string) {
+func DeleteSupplier(client supplychainpb.ScmServiceClient, id string) {
 	fmt.Println("DeleteSupplier ...")
-	var sreq scmpb.SupplierRequest
+	var sreq supplychainpb.SupplierRequest
 	sreq.SupplierId = id
 	sres, err := client.DeleteSupplier(context.Background(), &sreq)
 	if err != nil {
@@ -53,9 +53,9 @@ func DeleteSupplier(client scmpb.ScmServiceClient, id string) {
 	fmt.Printf("Response from supplier server %v\n", sres)
 }
 
-func GetSupplier(client scmpb.ScmServiceClient, id string) {
+func GetSupplier(client supplychainpb.ScmServiceClient, id string) {
 	fmt.Println("GetSupplier ....")
-	var sreq scmpb.SupplierRequest
+	var sreq supplychainpb.SupplierRequest
 	sreq.SupplierId = id
 	sres, err := client.GetSupplier(context.Background(), &sreq)
 	if err != nil {
@@ -64,9 +64,9 @@ func GetSupplier(client scmpb.ScmServiceClient, id string) {
 	fmt.Printf("Response from supplier server %v\n", sres)
 }
 
-func ListAllSuppliers(client scmpb.ScmServiceClient) {
+func ListAllSuppliers(client supplychainpb.ScmServiceClient) {
 	fmt.Println("List all suppliers ...")
-	var sreq1 scmpb.SupplierRequest
+	var sreq1 supplychainpb.SupplierRequest
 	sres1, err := client.ListAllSuppliers(context.Background(), &sreq1)
 	if err != nil {
 		log.Fatalf("Request error %v\n", err)
@@ -84,7 +84,7 @@ func ListAllSuppliers(client scmpb.ScmServiceClient) {
 }
 
 // TestSupplier tests all funcs in supplier
-func TestSupplier(client scmpb.ScmServiceClient) {
+func TestSupplier(client supplychainpb.ScmServiceClient) {
 	id := AddSupplier(client)
 	GetSupplier(client, id)
 	UpdateSupplier(client, id)

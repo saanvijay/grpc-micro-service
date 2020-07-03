@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"scmpb"
+	"supplychainpb"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -32,7 +32,7 @@ func main() {
 	}
 	defer connection.Close()
 
-	client := scmpb.NewScmServiceClient(connection)
+	client := supplychainpb.NewScmServiceClient(connection)
 
 	TestNetwork(client)
 	//TestSupplier(client)

@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"log"
-	"scmpb"
+	"supplychainpb"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (agServer *server) GetAgent(ctx context.Context, req *scmpb.AgentRequest) (*scmpb.AgentResponse, error) {
+func (agServer *server) GetAgent(ctx context.Context, req *supplychainpb.AgentRequest) (*supplychainpb.AgentResponse, error) {
 
 	// Collection for transporter
 	collection := mClient.Database("scmdb").Collection("agent")
@@ -23,7 +23,7 @@ func (agServer *server) GetAgent(ctx context.Context, req *scmpb.AgentRequest) (
 	}
 
 	result := collection.FindOne(context.TODO(), bson.M{"_id": agentID})
-	outData := scmpb.AgentResponse{}
+	outData := supplychainpb.AgentResponse{}
 
 	if err := result.Decode(&outData); err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (agServer *server) GetAgent(ctx context.Context, req *scmpb.AgentRequest) (
 	status := "Agent requested"
 
 	// Send processed, computed data
-	res := scmpb.AgentResponse{
+	res := supplychainpb.AgentResponse{
 		Agent:              agent,
 		AgentProperties:    req.GetAgentProperties(),
 		Products:           reqProducts,
@@ -45,7 +45,7 @@ func (agServer *server) GetAgent(ctx context.Context, req *scmpb.AgentRequest) (
 	return &res, nil
 }
 
-func (agServer *server) AddAgent(ctx context.Context, req *scmpb.AgentRequest) (*scmpb.AgentResponse, error) {
+func (agServer *server) AddAgent(ctx context.Context, req *supplychainpb.AgentRequest) (*supplychainpb.AgentResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("agent")
 	// Get data from request
@@ -56,7 +56,7 @@ func (agServer *server) AddAgent(ctx context.Context, req *scmpb.AgentRequest) (
 	status := "Agent added"
 
 	// Send processed, computed data
-	res := scmpb.AgentResponse{
+	res := supplychainpb.AgentResponse{
 		Agent:              agent,
 		AgentProperties:    agentProps,
 		Products:           resLogistics,
@@ -73,7 +73,7 @@ func (agServer *server) AddAgent(ctx context.Context, req *scmpb.AgentRequest) (
 
 	//Update Agent ID, since it is generated from MongoDB
 	agServer.UpdateAgent(ctx,
-		&scmpb.AgentRequest{
+		&supplychainpb.AgentRequest{
 			Agent:              res.Agent,
 			AgentProperties:    res.AgentProperties,
 			Products:           res.Products,
@@ -83,7 +83,7 @@ func (agServer *server) AddAgent(ctx context.Context, req *scmpb.AgentRequest) (
 	return &res, nil
 }
 
-func (agServer *server) DeleteAgent(ctx context.Context, req *scmpb.AgentRequest) (*scmpb.AgentResponse, error) {
+func (agServer *server) DeleteAgent(ctx context.Context, req *supplychainpb.AgentRequest) (*supplychainpb.AgentResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("agent")
 	agentID, err := primitive.ObjectIDFromHex(req.Agent.GetAgentId())
@@ -98,14 +98,14 @@ func (agServer *server) DeleteAgent(ctx context.Context, req *scmpb.AgentRequest
 		return nil, err
 	}
 
-	return &scmpb.AgentResponse{
-		Agent:       &scmpb.Agent{AgentId: agentID.Hex()},
+	return &supplychainpb.AgentResponse{
+		Agent:       &supplychainpb.Agent{AgentId: agentID.Hex()},
 		AgentStatus: "Agent Deleted",
 	}, nil
 
 }
 
-func (agServer *server) UpdateAgent(ctx context.Context, req *scmpb.AgentRequest) (*scmpb.AgentResponse, error) {
+func (agServer *server) UpdateAgent(ctx context.Context, req *supplychainpb.AgentRequest) (*supplychainpb.AgentResponse, error) {
 
 	collection := mClient.Database("scmdb").Collection("agent")
 	agentID, err := primitive.ObjectIDFromHex(req.Agent.GetAgentId())
@@ -119,7 +119,7 @@ func (agServer *server) UpdateAgent(ctx context.Context, req *scmpb.AgentRequest
 	agentType := req.Agent.GetAgentType()
 
 	// Process, check, compute data
-	var resProducts []*scmpb.OutboundLogistics
+	var resProducts []*supplychainpb.OutboundLogistics
 	// for each raw material check the stock status
 	for _, outProduct := range reqProducts {
 		// Get the location details from localDB or blockchain and sensor data from MQTT
@@ -130,9 +130,9 @@ func (agServer *server) UpdateAgent(ctx context.Context, req *scmpb.AgentRequest
 	status := "Agent updated"
 
 	// Send processed, computed data
-	update := scmpb.AgentResponse{
+	update := supplychainpb.AgentResponse{
 		//AgentId:   AgentID,
-		Agent:              &scmpb.Agent{AgentId: agentID.Hex(), AgentName: agentName, AgentType: agentType},
+		Agent:              &supplychainpb.Agent{AgentId: agentID.Hex(), AgentName: agentName, AgentType: agentType},
 		Products:           resProducts,
 		AgentRespondedTime: time.Now().Format("01-02-2006 15:04:05 Monday"),
 		AgentStatus:        status,
@@ -144,9 +144,9 @@ func (agServer *server) UpdateAgent(ctx context.Context, req *scmpb.AgentRequest
 	return &update, nil
 }
 
-func (agServer *server) ListAllAgents(req *scmpb.AgentRequest, stream scmpb.ScmService_ListAllAgentsServer) error {
+func (agServer *server) ListAllAgents(req *supplychainpb.AgentRequest, stream supplychainpb.ScmService_ListAllAgentsServer) error {
 	collection := mClient.Database("scmdb").Collection("agent")
-	data := &scmpb.AgentResponse{}
+	data := &supplychainpb.AgentResponse{}
 
 	cursor, err := collection.Find(context.TODO(), bson.M{})
 	if err != nil {
@@ -162,8 +162,8 @@ func (agServer *server) ListAllAgents(req *scmpb.AgentRequest, stream scmpb.ScmS
 			log.Fatal(err)
 			return err
 		}
-		stream.Send(&scmpb.AgentResponse{
-			Agent:              &scmpb.Agent{AgentId: data.Agent.GetAgentId(), AgentName: data.Agent.GetAgentName()},
+		stream.Send(&supplychainpb.AgentResponse{
+			Agent:              &supplychainpb.Agent{AgentId: data.Agent.GetAgentId(), AgentName: data.Agent.GetAgentName()},
 			AgentRespondedTime: data.AgentRespondedTime,
 			AgentStatus:        data.AgentStatus,
 		})

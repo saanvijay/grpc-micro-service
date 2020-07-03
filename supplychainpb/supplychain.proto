@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-import "scmpb/supplier.proto";
-import "scmpb/manufacturer.proto";
-import "scmpb/transporter.proto";
-import "scmpb/agent.proto";
-import "scmpb/network.proto";
+import "supplychainpb/supplier.proto";
+import "supplychainpb/manufacturer.proto";
+import "supplychainpb/transporter.proto";
+import "supplychainpb/agent.proto";
+import "supplychainpb/network.proto";
 
-package scm;
-option go_package = ".;scmpb";
+package supplychainpb;
+option go_package = ".;supplychainpb";
 
 service ScmService {
     // Upstream operations

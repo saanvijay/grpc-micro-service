@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"scmpb"
+	"supplychainpb"
 )
 
-func (n *server) CreateNetwork(ctx context.Context, req *scmpb.NetworkRequest) (*scmpb.NetworkResponse, error) {
+func (n *server) CreateNetwork(ctx context.Context, req *supplychainpb.NetworkRequest) (*supplychainpb.NetworkResponse, error) {
 
 	var network bgclient.BlockchainNetwork
 	network.Consortium = req.GetConsortium()
@@ -32,7 +32,7 @@ func (n *server) CreateNetwork(ctx context.Context, req *scmpb.NetworkRequest) (
 
 	// Update local database if anything goes as off-chain data
 
-	return &scmpb.NetworkResponse{
+	return &supplychainpb.NetworkResponse{
 		Result: true,
 	}, nil
 }

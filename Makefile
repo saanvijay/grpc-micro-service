@@ -2,9 +2,9 @@
 # Makefile to build package files from proto files and to build server & client executables
 #
 
-PKG_DIR = scmpb
-CLIENT_DIR = scm_client
-SERVER_DIR = scm_server
+PKG_DIR = supplychainpb
+CLIENT_DIR = supplychain_client
+SERVER_DIR = supplychain_server
 
 PROTO-FILES = $(wildcard $(PKG_DIR)/*.proto)
 PROTO-PB-OUT-FILES := $(patsubst $(PKG_DIR)/%.proto, $(PKG_DIR)/%.pb.go, $(PROTO-FILES))
@@ -12,8 +12,8 @@ PROTO-PB-OUT-FILES := $(patsubst $(PKG_DIR)/%.proto, $(PKG_DIR)/%.pb.go, $(PROTO
 SERVER_SRC = $(wildcard $(SERVER_DIR)/*.go)
 CLIENT_SRC = $(wildcard $(CLIENT_DIR)/*.go)
 
-SERVER_EXE = $(SERVER_DIR)/scm_server
-CLIENT_EXE = $(CLIENT_DIR)/scm_client
+SERVER_EXE = $(SERVER_DIR)/supplychain_server
+CLIENT_EXE = $(CLIENT_DIR)/supplychain_client
 
 VPATH := $(SERVER_DIR) $(CLIENT_DIR) $(PKG_DIR)
 

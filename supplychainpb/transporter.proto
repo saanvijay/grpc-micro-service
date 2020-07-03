@@ -1,8 +1,8 @@
 
 syntax = "proto3";
 
-import "scmpb/logistics.proto";
-option go_package = ".;scmpb";
+import "supplychainpb/logistics.proto";
+option go_package = ".;supplychainpb";
 
 message TransporterRequest {
     string transporter_id = 1;

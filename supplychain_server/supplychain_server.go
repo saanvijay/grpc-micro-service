@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"scmpb"
-
-	//"github.com/mongodb/mongo-go-driver/mongo"
+	"supplychainpb"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -67,7 +65,7 @@ func main() {
 
 	// Create GRPC Server
 	grpcServer := grpc.NewServer(opts...)
-	scmpb.RegisterScmServiceServer(grpcServer, &server{})
+	supplychainpb.RegisterScmServiceServer(grpcServer, &server{})
 
 	// Register reflection service on gRPC server
 	reflection.Register(grpcServer)

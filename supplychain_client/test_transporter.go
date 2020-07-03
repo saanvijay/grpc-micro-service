@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"scmpb"
+	"supplychainpb"
 	"time"
 )
 
-func AddTransporter(client scmpb.ScmServiceClient) string {
+func AddTransporter(client supplychainpb.ScmServiceClient) string {
 
 	fmt.Println("Add Transporter.....")
-	var req scmpb.TransporterRequest
+	var req supplychainpb.TransporterRequest
 	req.TransporterName = "Vijay"
 	req.TransporterRequestedTime = time.Now().Format("01-02-2006 15:04:05 Monday")
 	req.TransporterStatus = "Requsting Raw materials"
@@ -26,9 +26,9 @@ func AddTransporter(client scmpb.ScmServiceClient) string {
 	return res.GetTransporterId()
 }
 
-func UpdateTransporter(client scmpb.ScmServiceClient, id string) {
+func UpdateTransporter(client supplychainpb.ScmServiceClient, id string) {
 	fmt.Println("UpdateTransporter ....")
-	var req scmpb.TransporterRequest
+	var req supplychainpb.TransporterRequest
 	req.TransporterId = id
 	req.TransporterName = "DTDC"
 	req.TransporterRequestedTime = time.Now().Format("01-02-2006 15:04:05 Monday")
@@ -42,9 +42,9 @@ func UpdateTransporter(client scmpb.ScmServiceClient, id string) {
 
 }
 
-func DeleteTransporter(client scmpb.ScmServiceClient, id string) {
+func DeleteTransporter(client supplychainpb.ScmServiceClient, id string) {
 	fmt.Println("DeleteTransporter ...")
-	var sreq scmpb.TransporterRequest
+	var sreq supplychainpb.TransporterRequest
 	sreq.TransporterId = id
 	sres, err := client.DeleteTransporter(context.Background(), &sreq)
 	if err != nil {
@@ -53,9 +53,9 @@ func DeleteTransporter(client scmpb.ScmServiceClient, id string) {
 	fmt.Printf("Response from Transporter server %v\n", sres)
 }
 
-func GetTransporter(client scmpb.ScmServiceClient, id string) {
+func GetTransporter(client supplychainpb.ScmServiceClient, id string) {
 	fmt.Println("GetTransporter ....")
-	var sreq scmpb.TransporterRequest
+	var sreq supplychainpb.TransporterRequest
 	sreq.TransporterId = id
 	sres, err := client.GetTransporter(context.Background(), &sreq)
 	if err != nil {
@@ -64,9 +64,9 @@ func GetTransporter(client scmpb.ScmServiceClient, id string) {
 	fmt.Printf("Response from Transporter server %v\n", sres)
 }
 
-func ListAllTransporters(client scmpb.ScmServiceClient) {
+func ListAllTransporters(client supplychainpb.ScmServiceClient) {
 	fmt.Println("List all Transporters ...")
-	var sreq1 scmpb.TransporterRequest
+	var sreq1 supplychainpb.TransporterRequest
 	sres1, err := client.ListAllTransporters(context.Background(), &sreq1)
 	if err != nil {
 		log.Fatalf("Request error %v\n", err)
@@ -84,7 +84,7 @@ func ListAllTransporters(client scmpb.ScmServiceClient) {
 }
 
 // TestTransporter tests all funcs in Transporter
-func TestTransporter(client scmpb.ScmServiceClient) {
+func TestTransporter(client supplychainpb.ScmServiceClient) {
 	id := AddTransporter(client)
 	GetTransporter(client, id)
 	UpdateTransporter(client, id)
