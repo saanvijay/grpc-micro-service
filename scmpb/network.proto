@@ -1,0 +1,19 @@
+syntax = "proto3";
+option go_package = ".;scmpb";
+
+message NetworkOrg {
+    string orgName = 1;
+    string orgType = 2;
+    string orgProperties = 3;
+}
+message NetworkRequest {
+    string consortium = 1;
+    string networkName = 2; 
+    string channelName = 3;
+    int32 peersPerOrg = 4;
+    repeated NetworkOrg orgList = 5;
+ }
+ 
+ message NetworkResponse {
+    bool result = 1;
+ }

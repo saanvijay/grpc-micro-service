@@ -1,0 +1,21 @@
+
+syntax = "proto3";
+
+import "scmpb/logistics.proto";
+option go_package = ".;scmpb";
+
+message TransporterRequest {
+    string transporter_id = 1;
+    string transporter_name = 2;
+    string transporter_requested_time = 3;
+    string transporter_status = 4;
+    repeated Logistics logistics = 5;
+}
+
+message TransporterResponse {
+    string transporter_id = 1;
+    string transporter_name = 2;
+    string transporter_responded_time = 3;
+    string transporter_status = 4;
+    repeated Logistics logistics = 5;
+}

@@ -1,0 +1,24 @@
+
+
+syntax = "proto3";
+
+import "scmpb/logistics.proto";
+option go_package = ".;scmpb";
+
+message SupplierRequest {
+    string supplier_id = 1;
+    string supplier_name = 2;
+    repeated InboundLogistics rawmaterials = 3;
+    string supplier_status = 4;
+    string supplier_associatedOwner = 5;
+    string supplier_requestedTime = 6;
+}
+
+message SupplierResponse {
+    string supplier_id = 1; 
+    string supplier_name = 2;
+    repeated InboundLogistics rawmaterials = 3;
+    string supplier_status = 4;
+    string supplier_associatedOwner = 5;
+    string supplier_respondedTime = 6;
+}

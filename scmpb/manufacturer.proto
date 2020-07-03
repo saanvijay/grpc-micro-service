@@ -1,0 +1,23 @@
+
+syntax = "proto3";
+
+import "scmpb/logistics.proto";
+option go_package = ".;scmpb";
+
+message ManufacturerRequest {
+   string manufacturer_id = 1;
+   string manufacturer_name = 2;
+   repeated OutboundLogistics manufacturer_products = 3;
+   string manufacturer_status = 4;
+   string manufacturer_associatedOwner = 5;
+   string manufacturer_requestedTime = 6;
+}
+
+message ManufacturerResponse {
+   string manufacturer_id = 1;
+   string manufacturer_name = 2;
+   repeated OutboundLogistics manufacturer_products = 3;
+   string manufacturer_status = 4;
+   string manufacturer_associatedOwner = 5;
+   string manufacturer_respondedTime = 6;
+}

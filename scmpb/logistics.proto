@@ -1,0 +1,32 @@
+
+syntax = "proto3";
+option go_package = ".;scmpb";
+
+// InboundLogistics will be used in Upstream Operations 
+// typical stakeholders are Supplier and manufacturer
+message InboundLogistics {
+    Logistics rawmaterial = 1;
+}
+
+// OutboundLogistics will be used in Downstram Operations
+// typical stakeholders are dealer, wholesaler, customer,..
+message OutboundLogistics {
+    Logistics product = 1;
+}
+
+// Location will be used to track the logistic current location
+message Location {
+    uint64 latitude = 1;
+    uint32 longitude = 2;
+}
+
+// All details about logistics 
+message Logistics {
+    string logistic_id = 1;
+    string logistic_type = 2;
+    Location logistic_location = 3;
+    float logistic_price = 4;
+    bool logistic_in_stock = 5;
+    string logistic_properties = 6; // sensor data or any additional information
+}
+

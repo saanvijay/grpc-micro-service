@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+import "scmpb/supplier.proto";
+import "scmpb/manufacturer.proto";
+import "scmpb/transporter.proto";
+import "scmpb/agent.proto";
+import "scmpb/network.proto";
+
+package scm;
+option go_package = ".;scmpb";
+
+service ScmService {
+    // Upstream operations
+    rpc GetSupplier(SupplierRequest) returns (SupplierResponse) {};
+    rpc AddSupplier(SupplierRequest) returns (SupplierResponse) {};
+    rpc DeleteSupplier(SupplierRequest) returns (SupplierResponse) {};
+    rpc UpdateSupplier(SupplierRequest) returns (SupplierResponse) {};
+    rpc ListAllSuppliers(SupplierRequest) returns (stream SupplierResponse) {}; // server streaming
+
+    rpc GetManufacturer(ManufacturerRequest) returns (ManufacturerResponse) {};
+    rpc AddManufacturer(ManufacturerRequest) returns (ManufacturerResponse) {};
+    rpc DeleteManufacturer(ManufacturerRequest) returns (ManufacturerResponse) {};
+    rpc UpdateManufacturer(ManufacturerRequest) returns (ManufacturerResponse) {};
+    rpc ListAllManufacturers(ManufacturerRequest) returns (stream ManufacturerResponse) {}; // server streaming
+
+
+    // Downstream operations
+    rpc GetAgent(AgentRequest) returns (AgentResponse) {};
+    rpc AddAgent(AgentRequest) returns (AgentResponse) {};
+    rpc DeleteAgent(AgentRequest) returns (AgentResponse) {};
+    rpc UpdateAgent(AgentRequest) returns (AgentResponse) {};
+    rpc ListAllAgents(AgentRequest) returns (stream AgentResponse) {}; // server streaming
+
+    // CrossStream operations
+    rpc GetTransporter(TransporterRequest) returns (TransporterResponse) {};
+    rpc AddTransporter(TransporterRequest) returns (TransporterResponse) {};
+    rpc DeleteTransporter(TransporterRequest) returns (TransporterResponse) {};
+    rpc UpdateTransporter(TransporterRequest) returns (TransporterResponse) {};
+    rpc ListAllTransporters(TransporterRequest) returns (stream TransporterResponse) {}; // server streaming
+
+    // Blockchain 
+    rpc CreateNetwork(NetworkRequest) returns (NetworkResponse) {};
+};
+

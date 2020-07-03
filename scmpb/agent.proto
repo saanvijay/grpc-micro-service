@@ -1,0 +1,35 @@
+
+syntax = "proto3";
+
+import "scmpb/logistics.proto";
+option go_package = ".;scmpb";
+
+// Agent could be a Dealer/Wholesaler/Customer,...
+enum AgentType {
+    DEALER = 0;
+    WHOLESALER = 1;
+    CUSTOMER = 2; 
+}
+
+message Agent {
+    AgentType agent_type = 1;
+    string agent_id = 2;
+    string agent_name = 3;
+    string agent_registered_time = 4; // Agent registered time and date
+}
+
+message AgentRequest {
+    Agent agent = 1;
+    repeated OutboundLogistics products = 2;
+    string agent_status = 3;
+    string agent_requested_time = 4;
+    repeated string agent_properties = 5;
+}
+
+message AgentResponse {
+    Agent agent = 1;
+    repeated OutboundLogistics products = 2;
+    string agent_status = 3;
+    string agent_responded_time = 4;
+    repeated string agent_properties = 5;
+}
